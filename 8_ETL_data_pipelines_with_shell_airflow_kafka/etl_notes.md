@@ -1,6 +1,8 @@
 # ETL and ELT Processes
 
-> ETL is a acronym for an automated data pipeline engineering methodology.
+> ETL is a acronym for an automated data pipeline engineering methodology. Here is how [data engineering](https://realpython.com/python-data-engineer/) fit into a business model from real python.
+
+[toc]
 
 ## What's ETL
 
@@ -14,13 +16,13 @@ flowchart LR
 
 
 
-- extraction:
+- Extraction:
   
   - Description: configurng access to data and reading it into an application
   
   - Sources: Various API, web scrapping
 
-- transformation
+- Transformation
   - Descrption: processing data to make it conform to the requirements of both the target system or intended database
   - Sources: 
     - Processing data
@@ -30,7 +32,7 @@ flowchart LR
     - Joining
     - Feature engineering (?)
     - Formatting and data typing (casting etc)
-- load
+- Load
   - Description: loading data into a new environment such as a database, data warehouse or data mart.
   - Making the data readily available for analytics, dashboards, reports.
 
@@ -245,31 +247,57 @@ Step 5: Schedule ur ETL job
 
 ## Brief intro to data pipeline
 
-Outline:
+**Outline:**
 
-- define pipeline performance with `letency` and `throughout`
+- define what a data pipeline is
 
-- talk about some use cases
+- describe data pipeline performance with `letency` and `throughout`
+
+- talk about some use cases of data pipelines
+
+
+
+> What is a pipeline?
+>
+> - Series of connected processes
+> - output of one process is input of the next
+> - 可以用bash command glue those processes
 
 
 
 
 
-Use cases:
+### ETL performance measure latency and throughout
 
-- bakcing up files
+- `data packet`: units of data. 
+- `latency`: time it takes for a packet to go through the entire pipeline. 一份单位数据经过整个ETL stages的总时间.  
+- `throughout` :  quantify of data can be received within a unit of time. 单位时间内，接受完处理过的数据的量.
+
+
+
+
+
+<img src="https://cdn.comparitech.com/wp-content/uploads/2019/01/DiagramLatency-vs-throughput-2-1024x427.jpg" style="zoom:50%;" />
+
+**Use cases:**
+
+- bakcing up files (no transformation)
+
+- intefrating disparate raw data sources into a data lake
 
 - streaming data from IoT devices to dashboards
 
+- Preparing ra data for machine learning or production
 
 
-Summary:
+
+**Summary:**
 
 In this video, you learned that
 
 - data pipelines move data from one place or form to another
 
-- data flows through pipelines as a series of data packets
+- data flows through pipelines as a series of data packets flowing in and out 1 by 1
 
 - latency and throughput are key design considerations for data pipelines
 
@@ -281,9 +309,9 @@ In this video, you learned that
 
 ## Key data pipeline process
 
-Outline:
+**Outline:**
 
-- last key data pipeline processes
+- list key data pipeline processes
 
 - describe data pipeline monitoring considerations
 
@@ -291,13 +319,584 @@ Outline:
 
 
 
-Summary:
+**Stages of data processes:**
+
+1. Data extraction
+2. data ingestion 
+3. transforation stages
+4. loading into destination facility
+5. Scheduling or triggering
+6. Maintenance and Optimization
+
+
+
+**Pipeline monitoring considerations:**
+
+1. latency
+2. thoroughout
+3. Warnings, errors, failures
+4. utilization rate 
+5. logging and alerting system
+
+
+
+**load-balanced and unbalanced pipeline**
+
+下面讲一下`load-balanced pipelines` vs `unbalanced pipeline` 
+
+- 实际上,load-balanced pipeline指的是，在你的ETL pipeline中，每一个stage需要处理数据的时间，都是相等的，自然也不会有bottleneck, 这个idea就像车联网一样，如果汽车全部由计算机在控制，即使开同样的速度，都不会出任何事故. 而这种analogy, 在data pipeline中，也就对应着load-balanced pipeline
+- Handling unbalanced loads:
+  - Pipelines typically contain bottlenecks
+  - Slower stages may be parallelized to speed up throughput
+  - Processes can be replicated on myltiple CPUs/cores/threads
+  - Data packets are then distributed across these channels
+- parallel pipeline 也叫 dynamic pipeline or non-linear pipeline VS static pipeline A.K.A. serial pipeline
+
+
+
+**stage synchronization**
+
+- I/O buffers can help synchronize stages
+- Holding area for data between processing stages
+- Buffers regulate the flow of data, may improve throughput
+- I/O buffers used to distribute loads on parallelized stages
+
+
+
+**Summary:**
 
 - data pipeline processes include scheduling or triggering, monitoring, maintenance and optimization
-
 - pipeline monitoring - tracking latency, throughput, resource utilization, and failures
-
 - parallelization and I/O buffers can help mitigate bottlenecks
+
+
+
+## Batch VS Streaming data pipeline use cases
+
+**Objectives:**
+
+- Differentiate between batch pipelines and streaming data pipelines
+- Describe micro-batvh and hybrid lambda data pipeline (hybrid $\lambda$ ?)
+- List use cases for batch data pipelines
+- List use cases for streaming data pipelines
+
+
+
+### Batch data pipeline
+
+- Operate on batches of data
+- Run periodically - hours, days, weeks apart
+- Can be initiated based on data size or other triggers
+- When latest data isn't needed
+- Typical choice when accuracy is critical
+
+
+
+### Streaming data pipeline
+
+- Ingest data packets in rapid succession
+- For real-time results
+- Records/events processed as they happen
+- Event streams can be loaded to storage
+- Users publish/subscribe to event streams
+
+
+
+### Micro-batch data pipelines
+
+- tiny micro-batches and faster processing simulate real-time processing
+- smaller batches improve load balancing lower latency
+- when short windows of data are required during transformation
+
+
+
+### Batch vs stream requirements
+
+- trade-off between accuracy and latency requirements
+- data cleaning improves quality, but increases latency
+- lowering latency increases potential for errors
+
+
+
+### Lambda architecture
+
+> lambda architecture: combination of both batch and stream 
+
+```mermaid
+flowchart LR
+	block0("Historical Data")
+	block1("Streaming Data")
+	block2("Batch Layer")
+	block3("Speed Layer")
+	block4("Serving Layer")
+	block0 --> block2
+	block1 --> block3
+	block2 --> block4
+	block3 --> block4
+```
+
+- data stream fills in "latency gap"
+- Used when data window is needed but speed is also critical
+- drawback is logical complexity (结构太复杂了)
+- lambda architecture = accuracy and speed (只有在设计需求，同时需要accuracy和速度时，可以用lambda)
+
+
+
+Batch pipeline use cases
+
+- periodic data backup
+- transcation history loading
+- billing and order processing
+- data modelling on slowly varying data
+- mid to long term sales or weather forecasting
+- retrospective analysis (数据回溯)
+- Diagnostic mediacal image processing 
+
+
+
+Streaming use cases:
+
+- watching movies, listening to music or podcasts
+- social media feeds, sentiment analysis
+- Fraud detection
+- User behavior, advertising
+- Stock market trading
+- Real-time product pricing
+- Recommender systems
+
+
+
+|          | Batch Pipeline                                               | Streaming Pipeline                                           |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 特点     | 在一整个batch of data一起操作, 对于精度要求高但不要求实时的应用比较合适 | 把一个batch of data分成很多小块，ingest 1-by-1 quickly. 适合于对实时性要求高的应用 |
+| 应用场景 | 数据回溯，定期data back-up, 长期的销售预测                   | fraud detection, 听歌看netflix                               |
+
+
+
+## Data Pipeline Tools and Technologies
+
+**Objective:**
+
+- discuss data pipeline technologies
+- list open source and enterprise ETL and ELT tools
+- list streaming data pipeline tools
+
+
+
+商业级data pipeline features:
+
+- **Automation**: fully automated pipelines
+- **Ease of Use**: ETK rule recommendations
+- **Drag-and-drop interface**: "no-code rules" and data flows
+- **Transformation support**: Assistance with complex calculations
+- **Security and compliance**: data encryption and compliance with HIPAA and GDPR.
+
+
+
+### open source data pipeline tools
+
+#### open-source: Pandas
+
+- Pandas
+  - Pro:
+    - based on data frames for table-like structures
+    - great for ETL, data exploration, prototyping
+  - Con:
+    - Doesn't readily scale to big data
+- Libraies with similar API help with scaling up: Vaex, Dask, and Spark help with scaling up
+- Consider SQL-like alternatives such as PostgreSQL for big data applications.
+
+
+
+#### open-source: Apache airflow
+
+Now, we look at another open-source tool: Apache airflow
+
+
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/de/AirflowLogo.png" alt="w" style="zoom:22%;" />
+
+Some features:
+
+- versatile "configuration" as code data pipeline platform
+- Open-sourced by airbnb
+- programmatically author, schedule and monitor workflows
+- scales to big data
+- **integrates with cloud platforms such as** AWS, IBM, GOOGLE CLOUD or Azure
+
+
+
+#### open-source: talend
+
+Some JD also hires ppl who used JD b4.
+
+- supports big data, data warehousing and profiling
+- includes collaboration, monitoring and scheduling
+- Drag-and-drop GUI allows you to create ETL pipelines
+- Automatically generates Java code
+- Integrates with many data warehouse
+
+
+
+
+
+### Enterprise data pipeline tools
+
+#### AWS Glue
+
+- ETL service that simplifies data prep for analytics
+- Suggests schemas for storing your data
+- Create ETL jobs from the AWS console
+
+#### Panoply
+
+- An ELT-specific platform
+- No-code data integration
+- SQL-based view creation
+- Shifts emphasis from data pipeline development to data analytics
+- Integrates with dashboard and BI tools such as tableau and PowerBI
+
+#### Alteryx
+
+- Self-service data analytics platform
+- Drag-and-drop accessibility to ETL tools
+- No SQL or coding required
+
+#### IBM InforSphere
+
+- A data integration tool for designing, developing and running ETL and ELT jobs
+- the data integration component of the IBM InforSphere Information Server
+- Drag-and-drop graphical interface
+- Uses parallel processing and enterprise connectivity in a highly scalable platform
+
+
+
+### streaming data pipeline tools
+
+#### IBM Streams
+
+- build realtime analytical application using SPL, plus java, python and c++
+- Combine data in motion and at rest to deliver intelligence in real-time
+- achieve end-to-end processing with sub-millisecond latency
+- Includes IBM streams flows, a drag-and-drop interface for building workflows
+
+
+
+#### Others streaming
+
+- apache storm, sqlstream, samza, apache spark, azure stream analytics, Kafka
+
+
+
+**Summary:**
+
+- modern data pipeline technologies include schema and transformation support, drag-and-drop GUIs, and security features.
+- Pandas is an open-source Python libraries for prototyping and building data pipelines
+- Apache airflow and talent open studio allow you to programatically autho, schdule and monitor big data workflows
+- Panoply is specific to ELT pipelines
+- Alteryx and IBM infosphere data stage can handle both ELT and ETL
+- Stream-processing technologies include Apache Kafka, IBM Streams, and SQLstream
+
+
+
+# Apache airflow tutorial
+
+Apache Airflow's main advantage is representing data pipelines as `DAGS` expressed as code, which makes the data pipeline more maintainable, testable, and collaboeative. 
+
+> Tasks: it is the nodes in a DAG, are created by implementing Airflow's built-in operators.
+
+
+
+
+
+## Apache Airflow Overview
+
+
+
+### What is Apache Airflow
+
+- An open-source workflow orchestration tool 
+- A platform that lets you build and run workflows
+- A workflow is represented as a DAG (directly acyclic graph)
+- It is work flow manager not a streming solution.
+
+
+
+### Apache Airflow Features
+
+Simplified view of Airflow's architecture is shown in the image below:
+
+![Screen Shot 2022-11-08 at 09.20.01](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/airflow_architecture.png)
+
+- `Metadata Database`: Airflow holds a Metadata Database, which is used by the Scheduler, Executor, and the Web Server to **store the state of each DAG and its tasks** (和SQL中的metadata一样，只记录了数据库宏观的一些表征).
+- `Scheduler`: Airflow has its **built-in scheduler**, handling the triggering of all scheduled work flows. It is responsible for submitting individual tasks from each scheduled workflow to the Executor.
+- `Executor`: handles the running of these tasks by assigning them to workers, which run the tasks. 也就是包工头.
+- `Web Server`: serves airflow's powerful interactive user interface.
+- `User interface`: allows user to inspect, trigger and debug any of your DAG files and their individual tasks.
+- `DAG Directory`: contains all of your DAG files, ready to be accessed by the Scheduler, the Executer, each of its employed Worker.
+
+
+
+Sample DAG illustrating the labeling of different branches:
+
+![Screen Shot 2022-11-08 at 09.21.00](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/sample_DAG.png)
+
+If no errors, then 自动生成报表的体系 else email报错.
+
+
+
+### Lifecycle of an Airflow
+
+The lifecycle of an Apache Airflow task state:
+
+![Screen Shot 2022-11-08 at 09.21.21](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/airflow_lifecycle.png)
+
+一个成功的Airflow的流程, 是from no status to scheduled, queued, running, success. 当然也有capture failed airflow的mechanism
+
+
+
+### Airflow main features
+
+**Some main features:**
+
+- pure python
+  - flexibility
+- Useful UI
+  - Full insight into status
+- Integration
+  - plug and play with let's say IBM
+- Easy to use
+  - if you know python, you can
+- Open source
+  - community of developers
+
+
+
+**Airflow pipelines are built on four principles:**
+
+- Scalable
+  - modular architecture uses a orchestration
+- Dynamic
+  - dynamic pipeline generatorion in python
+- Extensible
+  - extend to more libraries to serve your application
+- Lean
+  - jinja templating engine
+
+
+
+### Apache Airflow use cases
+
+- `sift`: defining and organizing machine learning pipeline dependencies
+- `seniorlink`: increasing the visibility of batch processes and decoupling them
+- `experity`: deploying as an enterprise scheduling tool
+- `onefootball`: orchestrating SQL transformations in data warehouses
+
+
+
+## Why DAGs>
+
+Outline:
+
+- what a DAG is?
+- Describe worksflows as DAGs of tasks and dependencies
+- Outline the components of a DAG definition file
+- Describe how **scheduler executes tasks** on an array of workers 
+- List key pros of defining workflows as code
+
+
+
+### What is a DAG?
+
+The best explanation could be found [here](https://www.youtube.com/watch?v=1Yh5S-S6wsI).
+
+- Direct (D): it has a certain direction
+- Acyclic (A): it doesn't form a cycle so it doesn't flow back
+- Graph (G): graph containing node and edges.
+
+
+
+In Airflow:
+
+- Nodes are tasks.
+- Edges are dependencies, the sequence it should run
+- `Tasks`: tasks are writtening in python and tasks implement operators, for example, python, SQL, or Bash operators
+- `Operators`: determine what each task does, 比如
+  - `sensor operator`: poll for a certain time or condition. 比如每过30min去check一下文件是否存在啊.
+  - `other operators`: include email and HTTP request operators.
+
+
+
+### DAG definition components
+
+A typical DAG python script consists of:
+
+- Library imports
+- DAG arguments
+  - DAG Argument expressed with a `dictionary`
+- DAG definition
+  - definition or instantiation block for DAG
+- Task definitions
+- Task pipeline
+  - define the dependency `task1 >> task2`
+
+
+
+
+
+```python
+# library imports 导入库
+
+from datetime import datetime, timedelta
+from textwrap import dedent
+
+# The DAG object; we'll need this to instantiate a DAG
+from airflow import DAG
+
+# Operators; we need this to operate!
+from airflow.operators.bash import BashOperator
+
+# DAG definition or instantiation (这里把DAG argument nested in了)
+with DAG(
+    'tutorial',
+    # These args will get passed on to each operator
+    # You can override them on a per-task basis during operator initialization
+  # DAG argument
+    default_args={
+        'depends_on_past': False,
+        'email': ['airflow@example.com'],
+        'email_on_failure': False,
+        'email_on_retry': False,
+        'retries': 1,
+        'retry_delay': timedelta(minutes=5),
+        # 'queue': 'bash_queue',
+        # 'pool': 'backfill',
+        # 'priority_weight': 10,
+        # 'end_date': datetime(2016, 1, 1),
+        # 'wait_for_downstream': False,
+        # 'sla': timedelta(hours=2),
+        # 'execution_timeout': timedelta(seconds=300),
+        # 'on_failure_callback': some_function,
+        # 'on_success_callback': some_other_function,
+        # 'on_retry_callback': another_function,
+        # 'sla_miss_callback': yet_another_function,
+        # 'trigger_rule': 'all_success'
+    },
+    description='A simple tutorial DAG',
+    schedule=timedelta(days=1),
+    start_date=datetime(2021, 1, 1),
+    catchup=False,
+    tags=['example'],
+) as dag:
+
+    # t1, t2 and t3 are examples of tasks created by instantiating operators
+    # Task defintition 记住task implement operator, and operator could be python, bash or SQL.
+    t1 = BashOperator(
+        task_id='print_date',
+        bash_command='date',
+    )
+
+    t2 = BashOperator(
+        task_id='sleep',
+        depends_on_past=False,
+        bash_command='sleep 5',
+        retries=3,
+    )
+    t1.doc_md = dedent(
+        """\
+    #### Task Documentation
+    You can document your task using the attributes `doc_md` (markdown),
+    `doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets
+    rendered in the UI's Task Instance Details page.
+    ![img](http://montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)
+    **Image Credit:** Randall Munroe, [XKCD](https://xkcd.com/license.html)
+    """
+    )
+
+    dag.doc_md = __doc__  # providing that you have a docstring at the beginning of the DAG; OR
+    dag.doc_md = """
+    This is a documentation placed anywhere
+    """  # otherwise, type it like this
+    templated_command = dedent(
+        """
+    {% for i in range(5) %}
+        echo "{{ ds }}"
+        echo "{{ macros.ds_add(ds, 7)}}"
+    {% endfor %}
+    """
+    )
+
+    t3 = BashOperator(
+        task_id='templated',
+        depends_on_past=False,
+        bash_command=templated_command,
+    )
+		
+    # task pipeline 也就是决定DAG的dependencies
+    t1 >> [t2, t3]
+```
+
+
+
+当你写完你所有的DAG files, airflow scheduler会根据你在DAG中specify的dependencies和时间来做运作.
+
+> Airflow Schduler then schdules and depolys ur DAG files.
+
+It is defined as code with the following advantage:
+
+- Maintainable
+- Versionable
+  - with `git`
+- collarborative
+- Testable
+  - unit test for rech revision
+
+
+
+
+
+Some excellent material
+
+- read their official [help documentation](https://airflow.apache.org/docs/apache-airflow/stable/index.html)
+- 
+
+
+
+## Airflow setup
+
+This is a follow-along for a youtube tutorial on apache airflow.
+
+- `export AIRFLOW_HOME=.`: export airflow directory home environment to the current directory `.`
+
+- `airflow db init`: initialize a `sqlite` database. It is recommended by apache airflow not to user sqlite in production. For more info, [refers here](https://airflow.apache.org/docs/apache-airflow/2.4.2/howto/set-up-database.html).
+- `airflow webserver -p 8080` :
+- `airflow users create --help`: to create a user with admin role. On mac, make sure you just put `sudo` before anything
+- `airflow scheduler`: 
+
+
+
+## Hands-on lab (20mins)
+
+> theia and docker in cloud
+
+
+
+## Airflow monitoring and Logging
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
