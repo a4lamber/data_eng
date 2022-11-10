@@ -858,36 +858,306 @@ It is defined as code with the following advantage:
 Some excellent material
 
 - read their official [help documentation](https://airflow.apache.org/docs/apache-airflow/stable/index.html)
-- 
 
 
-
-## Airflow setup
-
-This is a follow-along for a youtube tutorial on apache airflow.
-
-- `export AIRFLOW_HOME=.`: export airflow directory home environment to the current directory `.`
-
-- `airflow db init`: initialize a `sqlite` database. It is recommended by apache airflow not to user sqlite in production. For more info, [refers here](https://airflow.apache.org/docs/apache-airflow/2.4.2/howto/set-up-database.html).
-- `airflow webserver -p 8080` :
-- `airflow users create --help`: to create a user with admin role. On mac, make sure you just put `sudo` before anything
-- `airflow scheduler`: 
-
-
-
-## Hands-on lab (20mins)
-
-> theia and docker in cloud
 
 
 
 ## Airflow monitoring and Logging
 
+Objective:
+
+- use logging capabilities to monitor the task status and diagnose problems with DAG runs
+- Explain accessing emitted metrics such as counters, gauges, and timers.
+
+### Logging
+
+
+
+![Screenshot 2022-11-09 at 10.30.34](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/airflow_log_schematic.png)
+
+
+
+log file is organized by both dag and task id.
+
+
+
+### Monitoring metrics
+
+自带提供三种monitoring metrics:
+
+- `Counter`: Metrics that always increase
+  - total count of task instances failures
+  - total count of task instances successes
+- `Gauges`: metrics that may **fluctuate**
+  - number of running tasks
+  - DAG bag size, or number of DAGs in production
+- `Timers`: Metrics related to time duration
+  - miliseconds to finish a task
+  - miliseconds to reach a success or failed state
+
+![Screenshot 2022-11-09 at 10.35.10](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/airflow_reporting_workflow.png)
+
+**Summary**:
+
+- You can save airflow logs into local files systems and send them to cloud storage, search engine, and log analyzers
+- Airflow recommends sending production deployment logs to be analyzed by [Elasticsearch](https://www.elastic.co) or Splunk
+  - Old [security information and event management (SIEM)](https://en.wikipedia.org/wiki/Security_information_and_event_management) is part of the data security ecosystem. SIEM is a data aggregator, search and reporting system. Its main functions are [reporting and forensic](https://www.varonis.com/blog/what-is-siem) about security incidents and alerts based on analytics that match a certain rule set, including a security issue. It is used to be on-premises (Splunk, IBM QRadar, LogRhythm) and now moved to fully on cloud, let's say Elasticsearch
+- Three types of Airflow metrics are counters, gauges, and timers
+- Airflow recommends that production deployment metrics be sent to and analyzed by Prometheus via StatsD
+
+
+
+## Airflow hands-on lab 
+
+### Step 1 set up
+
+In this section it covers basic step for setting up in 
+
+This is a follow-along for a youtube tutorial and another excellent [medium walk-through](https://towardsdatascience.com/a-complete-introduction-to-apache-airflow-b7e238a33df) on apache airflow.
+
+- `export AIRFLOW_HOME=.`: export airflow directory home environment to the current directory `.` or you can create a `.env` file by `echo "AIRFLOW_HOME=${PWD}/airflow" >> .env`
+
+- `airflow db init`: initialize a `sqlite` database as backend. It is recommended by apache airflow not to user `sqlite` in production. For more info, [refers here](https://airflow.apache.org/docs/apache-airflow/2.4.2/howto/set-up-database.html). After this step, you should be able to see this.
+
+- `airflow webserver -p 8080` : open a webserver
+- `airflow users create --help`: to create a user with admin role. On mac, make sure you just put `sudo` before anything
+- `airflow scheduler`: open the scheduler. 
+
+
+
+# Apache Kafka Tutorial
+
+Learning Objectives:
+
+- List main components of an ESP
+- Explain how Apache Kafka functions as an Event Streaming Platform (ESP)
+- List popular Kafka-based ESP-as-a-Service providers
+
+## Distributed Event Streaming Platform (ESP)
+
+**Outline**:
+
+- Descrive what an event is 
+- List the common event formats
+
+
+
+### What is an event?
+
+- `EVENT`: describe an entity's observable state updates over time
+  - Example: GPS coordinates of a car, temperature of a room
+  - Analogy, it is essential the total derivative of a variable.
+
+$$
+d\vec{V}=\frac{\partial \vec{V}}{\partial t}dt + \frac{\partial \vec{V}}{\partial x}dx + \frac{\partial \vec{V}}{\partial y}dy + \frac{\partial \vec{V}}{\partial z}dz
+$$
+
+Where $\vec{V} = \vec{V}(t,x,y,z)$
+
+
+
+### Common Event Formats
+
+- Primitive datatype
+  - `"HELLO"`
+- A key-value pair
+  - Key:
+  - Value:
+- A key-value pair with a timestamp
+  - Key:
+  - Value:
+  - timestamp:
+- More complex datatype: tuple, list, JOSN, XML
+
+
+
+### Event streaming
+
+Event steaming from one event source to one destination. 就比如GEOTAB或者t-box就需要实时传输, 做一下. The figure below shows a 1-1 event streaming.
+
+![Screenshot 2022-11-09 at 10.56.53](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/event_streaming.png)
+
+Event streaming传到云端，我再通过API来看.
+
+In reality, evenIt is generally harder with
+
+- streaming **multiple different sources** simultaneously and each event source could **have different protocol (JDBC, HTTP)**
+- sometimes, a event destination serves both as a desitination and a source 
+
+The problem is illustrate in the figure below
+
+![Screenshot 2022-11-09 at 11.00.03](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/multiple_event.png)
+
+为了解决上述这些问题, event streaming platform (ESP) becomes a solution. ESP相当于中间的relay, 来承接上游信号，而下游只需要和ESP做接口就可以了.
+
+An architecture for EVP is shown in the figure below
+
+![Screenshot 2022-11-09 at 11.04.08](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/ESP_architecture.png)
+
+### ESP main components
+
+基于不同ESP产品，往往有很多不同的组件，但是Main components of ESP (至少是功能-wise)有三个, they are
+
+- `Event Broker`:
+
+- `Event Storage`
+- `Analytic and Query Engine`
+
+![Screenshot 2022-11-09 at 11.04.19](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/ESP_BREAKDOWN.png)
+
+For event broker,
+
+![Screenshot 2022-11-09 at 11.05.10](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/event_broker.png)
+
+
+
+### Popular ESPs
+
+- Amazon Kinesis, Apache Flink, **Apache Kafka**, Apache Spark, Apache Storm etc
+- Apache kafka is the most popular one (until 2020, what abour 2022)
+
+
+
+## Apache Kafka Overview
+
+Objective:
+
+- recognize apache kafka as an event streaming platform
+- describe the architecture of Apache Kafka
+- List common use cases for Apache Kafka
+- Summarize the main features and benifits of Apache Kafka
+- List popular ESP-as-a-Service providers
+
+
+
+The main application of kafka is illustrated in the figure below
+
+![Screenshot 2022-11-09 at 11.20.04](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/kafka_application.png)
+
+
+
+Some upstream are:
+
+- `User Activities`: where user click, look or hover longer etc. 最早kafka在收集用户数据的应用占大多数
+- `Metrics`: event such as GPS, sensor etc. 之后逐渐向这个方向靠拢.
+
+
+
+### Kafka architecture
+
+Architecture
+
+![Screenshot 2022-11-09 at 11.21.04](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/kafka_architecture.png)
+
+
+
+Main features of Apache Kafka:
+
+- Distribution system
+- Highly scalable
+- Highly reliable
+- Permanent persistency
+- Open source
+
+
+
+### Event streaming platform as a service
+
+Some commercial used Apache Kafka 
+
+- confluent cloud, IB, event streams, amazons MSK
 
 
 
 
 
+## Building ES pipelines using Kafka
+
+Objectives:
+
+
+
+
+
+
+
+### Broker and topic
+
+- broker: 
+- Zoo-keeper
+
+
+
+
+
+Partition and replications? 这是啥意思
+
+
+
+
+
+### Kafka topic CLI
+
+
+
+
+
+### Kafka producer
+
+
+
+![Screenshot 2022-11-09 at 11.32.29](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/kafka_producer.png)
+
+
+
+### Kafka consumer
+
+kafka consumers
+
+- consumers are clients subscribed to topics
+- consume data in the same order
+- store an offset record for each partition
+- offset can be reset to zero to read all events from the beginning again
+
+
+
+![Screenshot 2022-11-09 at 11.35.30](/Users/yixiangzhang/Desktop/kafka_consumer.png)
+
+
+
+
+
+### An example
+
+The main workflow for a Kafka is illustrated in the picture below
+
+![Screenshot 2022-11-09 at 11.38.29](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/kafka_api.png)
+
+实际上这个project就很像我需要的一个profolio project. It would be awesome if i do something like that.
+
+
+
+**Summary:**
+
+- The core componts of kafka are
+  - `brokers`: The dedicated servers to receive, store, process, and distribute events.
+  - `Topics`: The containers or databases of events
+  - `Partitions`: Divide topics into different brokers
+  - `Replications`: Duplicate partitions into different brokers
+  - `Producers`: Kafka client applications to publish events into topics
+  - `Consumers`: kafka client application are subscribed to topics and read events from them
+- The kafka-topics CLI manages topics
+- The kafka-console-producer CLI manages producers
+- The kakka-console-consumer manages consumers 
+
+
+
+## Kafka streaming process
+
+Outline:
+
+![Screenshot 2022-11-09 at 12.15.44](/Users/yixiangzhang/Documents/DE_course/8_ETL_data_pipelines_with_shell_airflow_kafka/ad_hoc_weather_stream.png)
 
 
 
