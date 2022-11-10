@@ -2,10 +2,10 @@
 
 It is very important to be familiar with linux and shell script for a couple of reasons:
 
-- Data centers are designed with linux server, you need to know them well to troubleshoot and controlt them via command line
+- Datacenters (AWS, AZURE, GCP) are designed with linux server, you need to know them well to troubleshoot and controlt them via command line
 
 - Programming languate and framework would change over time but bash and linux stays 4ever (prob also true for SQL)
-- U need to be fluent in linux and shell to quickly learn other skills
+- U need to be fluent in linux and shell to quickly learn frameworks quickly 
 
 **Table of contents:**
 
@@ -13,7 +13,7 @@ It is very important to be familiar with linux and shell script for a couple of 
 
 
 
-# Introduction to Linux and Unix
+# Introduction to Unix and Linux
 
 
 
@@ -358,6 +358,421 @@ Objective:
 - The linux system consists of five key layers: user, application, OS, kernel, and software
 - **kernel is the lowest-level software** and it enables application to interact with ur hardware
 - The **shell is an OS-level application** for running commands, terminal is the UI for the shell.
+
+
+
+
+
+# Introduction to Linux Commands
+
+
+
+
+
+## Overview of Common Linux Shell Commands
+
+Objective:
+
+- what a shell is
+- list shell command application
+- common shell commans
+
+### What is shell?
+
+- user interface for running commands
+- scripting and interactive language
+- Default shell is Bash
+  - Many other shells includes: `sh`, `zsh`,`tcsh`,`zsh`, and `fish`
+
+> Tip: shell中 hypen用在单字前面`ls -l`，double hypheny用在完整的字前面 `bash --help`
+
+### Applications
+
+- getting information
+- navigating and working with files and directories
+- printing files and string contents
+- compression and archiving
+- **performing network operations**
+- **monitoring performance and status**
+- Running batch jobs (ETL operation)
+
+
+
+
+
+
+
+## Commands: Information
+
+Objectives:
+
+- find user information
+- determining OS info
+- analyze disk usage
+- describe and verify system health
+- list running process
+- Execute additional miscellaneous commands
+
+
+
+Let's take a look at these commands
+
+- `whoami`: return user name
+- `id`:userid and group id
+- `uname`: uname代表着 (Unix Name) reutrn OS information
+  - `uname -v`
+  - `uname -s -r`
+- `ps`: ps stands for (process status). display runnging processes and their identification number ([PID](https://www.google.com/search?q=what%27s+PID+in+terminal&client=safari&rls=en&sxsrf=ALiCzsbJPL5sRIcyL0LToYdALabPwBkm0g%3A1668089528458&ei=uAZtY8jAG62iptQPyoGJyAo&ved=0ahUKEwjI_K_e5aP7AhUtkYkEHcpAAqkQ4dUDCA4&uact=5&oq=what%27s+PID+in+terminal&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIGCAAQFhAeMgUIABCGAzIFCAAQhgMyBQgAEIYDMgUIABCGAzIFCAAQhgM6CggAEEcQ1gQQsAM6CggAEIAEEAoQiwM6BwgAEIAEEAo6CAgAEJECEIsDOgUIABCRAkoECE0YAUoECEEYAEoECEYYAFDuA1i9EGC8EmgBcAF4AIABcIgB1AiSAQM5LjOYAQCgAQHIAQa4AQLAAQE&sclient=gws-wiz-serp))
+- `top`: 代表着table of processes
+- `df`: mounted file systems
+  - `df -h`
+- `man`: reference manual
+  - `man echo`
+- `echo` print in the world the linux
+- `date`:today's date
+
+
+
+> Tip: in linux manual, if you see something in the square bracket like `id -F [user]` , it means it is optional.
+
+
+
+## Commands: File and Directory Nav
+
+- `ls`
+  - `ls -l`: l for long version, get everything from the child directories
+- `find`: find files in directory tree
+  - `find . -name "a.txt"`: 代表着找到所有current directory中`.`, 名字叫做a.md的文件
+- `pwd`: stands for **print working direcotry**
+- `cd`: change directory
+
+
+
+## Commands: File and Directory Management
+
+- `mkdir`: make an empty directory
+- `rm`: rm remove files
+
+- `rmdir`: remove directory 专门用来删除empty direcotry
+- `touch`: create empy file, update file date (last modified)
+- `cp`: copy file
+  - 如果只是要复制一个file, 那么`cp [source] [destination]` with `cp README.md /dest`
+  - 如果要复制一个direcotry 需要用`cp -r`  这里的`-r`代表着recursively
+  - 有一个常用的需求就是把上一级的文件移动到current directory, 可以用`cp ../README.md .`
+    - Source`../README.md`
+    - Destination `.`
+- `mv`: move a file or directory
+- `chmod`: change or modify file permissions. 这是很重要的一点
+  - 如果你在terminal中输入`ls -l README.md` the output would be `-rw-r--r-- 1 [user] [group] [date] [filename]`其中前几个characters代表三组权限
+    - permission for user (user permission)
+    - permission for members of the file's group (group permission)
+    - Any1 not in the first two categories (other permission)
+  - letter means:
+    - `r`: read permission
+    - `w`: write permissions
+    - `x`: execute permission. If the files is a script or a program, it can be run.
+    - `---` : means no permissions granted
+    - `rwx` :means all permission granted
+  - For more, please see [here](https://www.howtogeek.com/437958/how-to-use-the-chmod-command-on-linux/).
+
+
+
+## Hands-ON lab: information, file and directory commands (40 mins)
+
+略, 晚上做
+
+
+
+## Commands: Viewing File Content
+
+**Objectives:**
+
+- View the contents of a file in useful ways
+- Determine line, word, and character counts
+
+
+
+- `cat`: `cat` is short for **catenate** which means to link together or form into a catenated series. See **concatenate**!!! `cat` print entire file contents to standard output
+- `more`: print file contents page-by-page (current terminal page)
+- `head`: print first N lines of file. default to 10.
+  - `head -n 3 README.md` print first three
+- `tail`: print last N lines of file (pandas.dataframe估计是借鉴着bash)
+
+- `wc` : return count of **characters, words, lines** in file
+  - `wc -l`: return only line count
+  - `wc -w`: return only word count 
+
+
+
+## Commands: customizing view of file contents
+
+**Objective:**
+
+- Create a line-by-line sorted view
+- create a view with repeated lines excluede
+- extract lines containing a specified pattern
+- extract slices and fields from each line
+
+
+
+这里你一可以create一个`pets.txt` with `touch pets.txt` then `nano pets.txt`输入以下内容
+
+```markdown
+dog
+cat
+cat
+elephant
+zebra
+monkey
+rhino
+alligator
+```
+
+然后开始进行一些customized viewing, 这其实和sql的本质很像，进行一些row filtering, aggreagate stat stuff. 
+
+- `sort`: sort lines in a file
+  - `sort -r pets.txt` sort in reverse order
+- `uniq`: filter out repeated lines
+  - `uniq pets.txt`
+- `grep`: `grep` stands for **global regular expression print** that returns lines in file matching pattern
+
+学习正则，需要用以下的example `touch people.txt` 然后输入
+
+```
+Jensen Ackles
+Andre 3000
+Naveen Andrews
+Jensen Atwood
+Tyler Bachtel
+Penn Badgley
+Simon Baker
+Christian Bale
+Eric Balfour
+Eric Bana
+Alex Band
+Antonio Banderas
+Ike Barinholtz
+Ben Barnes
+```
+
+- `grep` examples:
+  - `grep ic people.txt` returns the line having `ic` 
+  - `grep -i ic people.txt` returns the line having `ic` , `Ic`, `iC` or `IC` 
+    - Note: `-i` stands for `case insensitive`
+- `cut`: extracts a section from each line
+  - `cut -c 2-9 people.txt`: return character, 2 to 9 digits (这里计算是从1开始)
+  - Example: 你想找到last name for each line
+    - `cut -d ' ' -f2 people.txt`: 
+- `paste`: merge lines from different files (default delimiter is tab)
+  - tab delimiter
+    - `paste first.txt last.txt`
+  - other delimiter `-d` option for delimiter
+    - `paste -d "," first.txt last.txt`
+
+
+
+
+
+## Commands: File Archiving and Compression
+
+**Objective:**
+
+- Distinguish file archiving from file compression
+- Create archived files and unpack them
+- Apply commands to compress, decompress, and extract fiels from archieves
+
+
+
+
+
+**Archives:**
+
+- Store rarely used information and preserce
+
+- Archives are a collection of data files and directories as a single file
+
+- Make the collection more portable and serve as a backup in case of loss or corruption
+
+  Archive process的流程图如下 ：
+
+```mermaid
+flowchart LR
+	tar --> bundle
+	bundle --> compress
+	compress --> done
+```
+
+**File compression:**
+
+- Reduce file size by reducing information redundancy
+- Preserves storage space, speeds up data transfer, and reduces bandwidth load
+
+Compress process的流程图如下 ：
+
+```mermaid
+flowchart LR
+	zip --> compress
+	compress --> bundle
+	bundle --> done
+```
+
+
+
+- `tar`: `tar` stands for tape archive. archive a set of files
+  - `tar -cf notes.tar notes`
+- `zip`: compress files and directories to an archive
+- `unzip`: extract files from a compressed zip archive
+
+
+
+
+
+## Commands: Network
+
+> 这张要重点学习, 为了转行DE
+
+Overview:
+
+- Examine ur network configuration
+- Evaluate the stability of a URL connection
+- Identify and retrieve data from a URL
+
+
+
+
+
+- `hostname`: print host name
+  - defatule to username.local
+
+- `ping`: send **ICMP**(一种传输协议) packets to URL and print response
+- `ifconfig`: display or configure system network interfaces
+  - `ifconfig eth0`: info about ethernet adapter
+- `curl`: transfer data to and from URL(s) and support many protocals
+  - `curl www.google.com` print the `html` of the landing page
+  - `curl www.google.com -o google.txt` h 
+- `wget`: (web get) download files from a URL
+  - more focused than `curl` , supports recursive file downloads
+
+
+
+## Hands-ON lab: compressing, networking commands (40 mins)
+
+略
+
+
+
+
+
+
+
+# Introduction to shell scripting
+
+终于过了basic shell command,  要到写shell代码的时候了, 天道酬勤，我一定可以的. 
+
+Learning objective for this sections are
+
+- Describe `shebang` interpreter directive
+- Use pipes and filters
+- Create and work with shell environment variables
+- Schedule cron jobs with `crontab` and understand `cron` syntax
+- Perform command substitution
+- Execute commands in concurrent mode
+
+
+
+
+
+## Shell Scripting Basics
+
+Objective:
+
+- Outline what a script is 
+- list use cases for scripting
+- Describe the `shebang` interpretive directive
+- Create and run a simple hello_world shell script
+
+
+
+
+
+### What is a script
+
+- sciprting languate are not compiled and interpreted at runtime
+- Slower to run but develop fast
+
+
+
+### What is a script used for
+
+- widely used to automate processes
+- ETL jobs, file back-ups and archiving, system admin
+- Used for application integration, plug-in development, web apps, and many other tasks
+
+
+
+### Shell scripts and the `shebang`
+
+- Shell script: executable text file with an **interpreter direvtive**, also called `shebang` directive of the following form:
+  - **#!interpreter [optional-arg]**
+    - `interpreter`: path to an executable program
+    - `optional-arg`: single argument string
+
+Shell script directives:
+
+```shell
+#!/bin/sh
+#!/bin/bash
+```
+
+Python (python is also a scripting language):
+
+```python
+#!/usr/bin/env python3
+```
+
+
+
+
+
+### `Helloworld` shell script
+
+make a file
+
+```bash
+touch hello_world.sh
+echo '#! /bin/bash' >> hello_world.sh
+echo 'echo hello world' >> hello_world.sh
+```
+
+
+
+make it executable
+
+```
+ls -l hello_world.sh
+chmod + x hello_world.sh
+ls -l hello_world.sh
+```
+
+The three groups are user, group, all users in `-rw-rw-r--`
+
+```
+./hello_world.sh
+```
+
+
+
+## Hands-on Lab: getting started with shell scripting (30mins)
+
+略
+
+
+
+
+
+
+
+
 
 
 

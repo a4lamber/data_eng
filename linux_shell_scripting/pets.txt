@@ -1,0 +1,8 @@
+cat
+cat
+elephant
+dog
+zebra
+monkey
+rhino
+alligator
