@@ -804,17 +804,24 @@ Objectvive:
 
 filters are shell commands:
 
-- Takes input from standatrd input (`stdin` in this case keyboard)
-- send output to standard ouptu (`stdout` in this case terminal)
-- transform input data to output data
-- Examples: wc, cat, more, head, sort
-- Filters can be chained together
+- Filter command的定义是a command which can accept input from standard input and send output to standard output.
+
+  - Takes input from standatrd input (`stdin` in this case keyboard)
+
+  - send output to standard ouptu (`stdout` in this case terminal)
+
+  - transform input data to output data
+
+- 常见的filter command 包括: wc, cat, more, head, sort
+- Filters can be chained together with pipe command 
+
+
 
 
 
 pipe command `|`
 
-- for chaining filter commands
+- for chaining **filter commands**
 
 - Example: `command1 | command2`
 - output of command 1 is the input of command 2
@@ -945,9 +952,77 @@ too much reg-ex
 
 > Tips: `ctrl + L` clears the whole screen 
 
-## Hands-on lab bash scripting (30mins)
+## **Lab**: bash scripting (30mins)
 
-略
+
+
+### Exercise 2 quote
+
+- backslash `\` removes the meaning of the special character that follows it.
+  - `echo The symbol for multiplication is \*`
+- single quote remove special  meanings of all special characters within them (except another single quote) 
+  - `echo 'Following are some special characters in shell - < > ; " ( ) \ [ ]  '`
+- double quote remove special meanings of all special characters within them except another **double quote**, **variable substitution** and **command substitution**
+
+```bash
+# this just returns as is
+echo 'Current user name: $USERNAME'
+
+# this return variable substitution
+echo "Current user name: $USERNAME"
+# this return command substitution
+echo "My current directory is $(pwd)"
+
+```
+
+
+
+### Exercise 3 working with variable
+
+`bash` 和`fish`有些许不同，我们接下来完成流程
+
+1. 查看所有shell variable
+2. 设置一个shell variable
+3. 查看所有shell variable
+4. 查看所有environmental variable
+5. 升级为environment variable
+6. 查看所有environmental variable
+7. 删除这个variable
+
+### Exercise 5 I/O redirection
+
+| Symbol | Meaning                               |
+| ------ | ------------------------------------- |
+| <      | input direction                       |
+| >      | output direction **(overwrite)**      |
+| >>     | Append output **(append to the end)** |
+| 2>     | Error redirection                     |
+
+
+
+
+
+### Exercise 7: Command line arguments
+
+Command line arguments are a very convenient way to pass inputs to a scirpt.
+
+#### Exercise 7.1 create a simple bash that handles two arguments
+
+
+
+
+
+#### Exercise 7.2 Find the total disk space usage
+
+
+
+
+
+### Practice questions
+
+- [ ] 记得有空做一下这五题practice
+
+
 
 
 
@@ -1013,6 +1088,7 @@ objective:
 
 - what's the difference between environment and shell variable?
 - `''` and `""` , what's the difference and could you give an example?
+- command substitution `$(pwd)` and variable substitution `$PATH`
 
 
 
