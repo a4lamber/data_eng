@@ -2,7 +2,11 @@ cat
 cat
 elephant
 dog
+dog
+cat
+zebra
 zebra
 monkey
 rhino
+zebra
 alligator

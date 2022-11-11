@@ -531,9 +531,30 @@ alligator
 然后开始进行一些customized viewing, 这其实和sql的本质很像，进行一些row filtering, aggreagate stat stuff. 
 
 - `sort`: sort lines in a file
+
   - `sort -r pets.txt` sort in reverse order
-- `uniq`: filter out repeated lines
-  - `uniq pets.txt`
+
+- `uniq`: prints input with consecutive repeated lines collapsed into a single, unique. 这个比较tricky, 因为他不会return unique value in the file. 它主要做以下的事情:
+
+  ```bash
+  # pets.txt
+  cat
+  cat
+  dog
+  dog
+  hello
+  dog
+  
+  # uniq pets.txt
+  cat
+  dog
+  hello
+  dog
+  ```
+
+  - `uniq pets.txt`并不能输出unique value in here
+  - 想输出unique values的小技巧是用之后学到的pipe operator `|`, by doing `sort pets.txt | uniq`
+
 - `grep`: `grep` stands for **global regular expression print** that returns lines in file matching pattern
 
 学习正则，需要用以下的example `touch people.txt` 然后输入
@@ -767,6 +788,231 @@ The three groups are user, group, all users in `-rw-rw-r--`
 略
 
 
+
+
+
+## Filters, pipes and variables
+
+Objectvive:
+
+- wha'ts pipes and filters
+- explains and set shell and environment variables
+
+
+
+### Pipes and filters
+
+filters are shell commands:
+
+- Takes input from standatrd input (`stdin` in this case keyboard)
+- send output to standard ouptu (`stdout` in this case terminal)
+- transform input data to output data
+- Examples: wc, cat, more, head, sort
+- Filters can be chained together
+
+
+
+pipe command `|`
+
+- for chaining filter commands
+
+- Example: `command1 | command2`
+- output of command 1 is the input of command 2
+- Example: `ls | sort -r` returns reverse sorted list of contents
+
+
+
+### shell variables
+
+- scope of shell variable is limited to shell
+
+- `set` - list all shell variable
+
+  
+
+  定义一个shell variable 只需要`=` 但不要加上空格，accessing a shell variable则需要`$`
+
+```bash
+GREETINGS='HELLO'
+echo $GREETINGS
+```
+
+当然你要移除shell variable用`unset GREETINGS`
+
+
+
+
+
+### Environment variables
+
+- Extend scopt from shell variable to environment variable with `export var_name`
+  - 那也就解释了在Apahe Airflow里，你需要`export AIRFLOW=.` 将environment variable `AIRFLOW` 设置成当前
+  - `env`: list all environment variables
+    - `conda env list`: list it !
+    - `env >> environment_variable.txt`: 将所有environment variable塞进`.txt`文件里
+    - `env | grep 'air'`: 用pipe feature to chain command `env` and `grep` to grab environment variable with `air` in it. 
+
+### Summary:
+
+- 关于environment variable和shell variable的概念和差异，其实很像global and local variable之间的差异，但还是要找一些资源细致的阅读一下
+- filters are shell commands
+- The pipe operator `|` allows you to chain filter commands
+- Shell variables can be assigned values with `=` and listed using `set`
+- Environment variables are shell variables with extended scope to all child processes; create with `export`, list with `env`
+
+
+
+## Exercise: pipe for bitcoin
+
+too much reg-ex
+
+
+
+
+
+
+
+## Useful features of bash
+
+- metacharacters
+- Quoting
+- I/O redirection
+- Command substitution
+- Command line arguments
+- Batch vs. concurrent modes of execution
+
+
+
+- metacharacters:
+  - `#`  comment out
+  - `;` command separator
+  - `*` filename expansion wildcard
+    - `ls ./*.txt` returns all `.txt` files in the current directory`.`
+  - `?`: single character wildcard in filename expansion
+    - `ls /bin/?ash` returns `/bin/bash` and `/bin/dash`
+
+这个wildcard concept在SQL中也有，
+
+| -                             | SQL  | Bash |
+| :---------------------------- | ---- | ---- |
+| Single character              | _    | ?    |
+| Arbitary number of characters | %    | *    |
+
+
+
+- Quoting
+  - `\` escape special character interpretation
+    - `echo "\$1 each"` skips the `$`. 这个概念其实和latex中`\%` 才能输入百分号一样`%`，不然就会被默认为`%`是metacharacter
+    - similarly, in markdown \ also works with ` to skip the code setting 
+  - ` " "` interpret literally, but evaluate metacharacters
+  - `' '` interpret literally
+
+
+
+- I/0 redirection
+  - refers to a set of features used for redirecting
+  - `>`: redirect output to file
+  - `>>` append output to file
+  - `2>` redirect standard error to file
+    - 比如说你没有装某个command, let's say `conda` 然后会给你报错，说`conda:command not found` 这时候你可以redirect standard error to a `.txt` 文件，进行报错内容的收集
+    - `garbage 2 > err.txt` ? not availve on mac darwin?
+  - `2>>` append standard error to file
+  - `<` redirect file contents to standard input
+
+
+
+- Command substitution
+  - Replaces command with its output
+  - $(command) or \`command\`
+    - here=$(pwd)
+  - 这个概念`command substitution`我不是很comfortable
+
+
+
+
+
+- Command line arguments
+  - a way to pass arguments to a shell script
+
+
+
+### Batch vs concurrent modes
+
+- batch mode: runs sequentially
+  - `command1;command2`
+- concurrent mode: runs in parallel
+  - `command1 & command2`
+
+> Tips: `ctrl + L` clears the whole screen 
+
+## Hands-on lab bash scripting (30mins)
+
+略
+
+
+
+## Scheduling job with `cron`
+
+objective:
+
+- schedule crob jobs with crontab
+- understand cron syntax
+- view and remobe cron jobs
+
+
+
+### Job scheduling
+
+- schedule jobs to run automatically at certain times
+  - Example: load script at midnight every night backup script to run every sunday at 2 am (isn't this how reminder work?"
+
+
+
+
+
+- cron is a service that runs jobs
+- crond (daemon) interprets 'crontab files' and submits jobs on cron
+- A crontab (cron table) is a table of jobs and schedule data
+- Crontab command invokes text editor to edit a crontab file
+
+
+
+- `crontab -e` 打开cron table
+- `m h dom mon dow command`
+  - `m` for minute, h for hour, dom for day of month, mon for month, `dow` for day of week (0 for sunday, 1 for Monday)
+  - Example: `30 15 * * 0 date >> sundays.txt`
+    - `*` use of wildcard character for arbitary # of chars
+    - any # of space is allowed 
+
+```bash
+# m   h  dom  mon dow   command
+  30 15    *    *   0    date >> path/sundays.txt
+
+  0   0    *    *   *    /cron_scripts/load_date.sh
+
+  0   2    *    *   0    /cronscripts/backup_data.sh
+
+# every sunday at 15:30pm append the current date to sunday.txt
+# every midnight execute load_date.sh
+# every sunday on 2:00am , save the job (word自动保存feature)
+```
+
+- `crontab -l` lists all cron jobs in the cron table
+
+
+
+
+
+## Hands-on lab scheduling with `crontab`(20 mins)
+
+略
+
+
+
+## Q & A session
+
+- what's the difference between environment and shell variable?
+- `''` and `""` , what's the difference and could you give an example?
 
 
 
