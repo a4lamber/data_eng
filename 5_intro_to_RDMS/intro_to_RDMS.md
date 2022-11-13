@@ -261,7 +261,254 @@ This chapter mainly covers the popular databases out there in the industry like 
 
 
 
+## Database Architecture
 
+**Objective:**
+
+- Describe deployment topologies for databases
+- Explain 2-tier and 3-tier architectures including their layers such as database drivers, interfaces and APIs.
+
+
+
+
+
+### Deployment Topologies - Local
+
+Local/Desktop
+
+- resides on the user's system and access is limited to single user enviromment
+- 也叫做single-tier architecture
+
+
+
+Application
+
+- Development/testing
+- Database embedded in a local application
+
+
+
+### Client/server
+
+- Client/server
+- database resides on a database server
+- Users access database from client system
+- sometimes there is a middle-tier (Application Server Layer)
+- For multi-user scenerio
+
+![Screenshot 2022-11-11 at 08.23.29](/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/client-server.png)
+
+### Deployment Topologies - Cloud
+
+- Database resides in a cloud environment
+- No need to download or install software
+- Client access database through an application server layer
+
+![Screenshot 2022-11-11 at 08.25.19](/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/cloud-topology.png)
+
+### 2-Tier Database Architecture
+
+- Dadabase server可以分成三个abstract部门
+  - `Database acess layer` (又分为三个部门)
+    - API 常见的data industry APIs 有两种JDBC和ODBC protocal
+    - Command Line Processort (CLP) 
+  - `Database engine`: compiles queries and retrieves and processes the data and returns the result set.
+  - `Datbase storage layer`
+
+![Screenshot 2022-11-11 at 08.27.06](/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/2-tier-topology.png)
+
+
+
+### 3-Tier Database Architecture
+
+- In most production environemtn, especially with last 20-25年都是3-tier architecture, 用户不直接和database server对接，通过中间的application server layer
+
+![Screenshot 2022-11-11 at 08.28.16](/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/3-tier-topology.png)
+
+
+
+**Summary:**
+
+- Database are deployed in different topologies.
+- A single-tier topology is one where the database is installed on a user's local desktop
+- In 2-tier database topologies, the database resides on a remote server and users access it from client systems
+- In 3-tier database topologies, the database resides on a remote server and users access it through a middle-tier
+- In cloud deployments, the database resides in the cloud, and users access it through application server layer or cloud interface
+
+
+
+
+
+## Distributed Architecture and Clustered Databases
+
+**Keyword**: **`#shared disk distributed database architecture`**, **`#replication`**, **`#parititioning and sharding`**
+
+
+
+### Distributed Architectures
+
+- mission critical/large scale workloads 
+- High Availability/high scalability requirements
+- Databases distributed on a cluster of servers
+- Shared disk architecture
+  - Share common storage
+- Shared nothing architecture
+  - Replication
+  - Partitioning
+
+
+
+### Shared disk architectures
+
+实际上就是一个风险均摊的架构, Shared disk的架构有这样几个好处:
+
+- 一个DB down了，或者hardware failure, 可以直接reroute到另一个用户，不影响client access data
+- 还有一个好处，是concurrent design 或者叫parallel design, 这样速度快啊
+
+![](https://media-exp1.licdn.com/dms/image/C4D12AQG61L6unvgFrQ/article-cover_image-shrink_600_2000/0/1520092102173?e=2147483647&v=beta&t=Ve4qF8E-43G_4LMgbNw5xnfPrhhvt04ahk1S0mKb7Eo)
+
+
+
+### Database Replication
+
+在说database replication 之前我们先来说说data replication 
+
+> Data replication is the process of copying data at different physical and virtual location in a manner where each instance of the data is consistent --- increasing availablity and accessibility across networks.
+
+Similarly, DB replication is a process of copying data from a source database to one or more targer databases. 一般常用的方式是通过data manipulation language (DML) to ensure data is consistent across each instance (也就是备份).
+
+<img src="https://media.striim.com/wp-content/uploads/2021/04/07001451/CDC-Infographic-1.png" style="zoom:30%;" />
+
+具体DML示意图如下，实际上和`git`做version control的格式很像
+
+<img src="https://media.striim.com/wp-content/uploads/2021/04/06232959/Option-1-970x570.png" style="zoom:50%;" />
+
+实现database replication有两个好处
+
+1. 备份在server in the same database center, 防止数据丢失 (obvisously)
+2. 备份在别的database center防止power outage, fire, flood or natural disaster
+
+更多细节，[看这里](https://www.striim.com/blog/a-guide-to-modern-database-replication/).
+
+### Paritioning and sharding
+
+- In partitioning, very large tables are split across multiple logical parititions
+- In sharding, each partition has its own compute resources
+
+
+
+
+
+
+
+## Database Usage Patterns
+
+**Keyword**: **`#datebase users `**, **`#interfaces and tools`**
+
+
+
+ 
+
+### DE and Database Admin
+
+<img src="/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/de_tool.png" alt="Screenshot 2022-11-11 at 09.45.43" style="zoom:67%;" />
+
+
+
+### DS and DA
+
+<img src="/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/da_tool.png" alt="Screenshot 2022-11-11 at 09.47.13" style="zoom:67%;" />
+
+
+
+
+
+### Application developers and programmers
+
+有两种方法: APIs and ORMs
+
+- **APIS**: REST APIs可能是目前最火的API for working with database
+- **Object relational mapping (ORM)** for working with database
+  - ActiveRecord for Ruby
+  - application Django in Python
+  - .NET Hibernate in Java
+  - Sequelize in JavaScripts
+
+<img src="/Users/yixiangzhang/Desktop/orm_framwork.png" alt="Screenshot 2022-11-11 at 09.59.53" style="zoom:70%;" />
+
+
+
+Summary
+
+- three main claaess of users are
+  - DE
+  - DA and DS and business analysts
+  - Application developers
+- Databases can be accessed through
+  - graphical and web interfaces
+  - command line tools
+  - APIs and ORMs
+- Major categories of database applications include
+  - database management tools
+  - data sciewnce and BI tools
+  - busienss and industry applications
+
+
+
+## Introduction to relational database offerings
+
+**Keyword**: **`#hisotry of relational database `**, **`#popular db`**
+
+
+
+- Open-source relational databases
+  - MySQL
+  - PostgreSQL
+  - SQLite
+
+
+
+- Cloud databases
+  - Driven by move to SaaS model (software as a service)
+  - Highly scalable for data analytics
+  - Popular 
+    - Amazon DynamoDB
+    - Amazon Redshift
+    - Microsoft Azure Cosmos DB
+    - Microsoft Azure SQL DB
+    - Google BigQuery
+
+
+
+## Db2
+
+- 官方带货
+
+
+
+
+
+
+
+## MySQL
+
+
+
+
+
+### History
+
+- Part of LAMP Stack: linux, apache webserver mysql and php stack
+
+
+
+
+
+
+
+
+
+## PostgreSQL
 
 
 

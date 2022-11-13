@@ -19,7 +19,7 @@ It is very important to be familiar with linux and shell script for a couple of 
 
 ## Intro to Linux and Unix
 
-Outline:
+**Outline:**
 
 - what is an OS
 - what is unix and linux
@@ -34,7 +34,7 @@ Outline:
   - Example: the most famous one is Apple macOS
   - 1960s created in BELL lab, 1980s Unix rewritten in C
 - `Linux` is a family of Unix-like OSs
-  - Linux was developed as an effort to create a free, open source Unix OS.
+  - Linux was developed as an effort to create a free, open-source Unix OS.
   - Linux features:
     - Free and open source
     - secure
@@ -56,11 +56,9 @@ Common cases for Linux today:
 
 ## Overview of Linux Architecture
 
-Objectives:
+**keywords:** `linux layers`,`linux filesystem`
 
-- list the layers in a Linux
-- Describe the function of each layer in a linux system
-- describe the linux file system
+
 
 
 
@@ -78,8 +76,8 @@ Linux has 5 layers shown below,
 - `application`: any software that lets you perform a task
   - system tools
   - programming languages
-  - shells
-  - users apps(game, browser)
+  - shells (没错，shell也是application的一种)
+  - users apps (games, browser)
 - `OS`: controls the jobs and programs vital to health and stability
   - Also assigns software to users
   - help detect errors and prevent failures
@@ -225,7 +223,7 @@ There are two types:
 - `GUI-based text editors`
   - gedit
 
-- Hycrid:
+- Hybrid of GUI and command-line:
   - emacs
 
 
@@ -261,7 +259,7 @@ There are two types:
 
 
 
-Summary:
+**Summary:**
 
 - 有许多edior, 主要分command-line edior 和 GUI edior
 - popular ones include vim, nano and gedit.
@@ -347,9 +345,11 @@ Objective:
 
 
 
-## Hands-on lab with Linux (1-hour)
+## **Lab**: getting started with terminal
 
 
+
+- `ls /`: return only the directory
 
 
 
@@ -404,7 +404,7 @@ Objective:
 
 ## Commands: Information
 
-Objectives:
+**Objectives:**
 
 - find user information
 - determining OS info
@@ -441,6 +441,7 @@ Let's take a look at these commands
 
 - `ls`
   - `ls -l`: l for long version, get everything from the child directories
+  - `ls /` only returns directory. No files returned
 - `find`: find files in directory tree
   - `find . -name "a.txt"`: 代表着找到所有current directory中`.`, 名字叫做a.md的文件
 - `pwd`: stands for **print working direcotry**
@@ -494,6 +495,8 @@ Let's take a look at these commands
 
 - `cat`: `cat` is short for **catenate** which means to link together or form into a catenated series. See **concatenate**!!! `cat` print entire file contents to standard output
 - `more`: print file contents page-by-page (current terminal page)
+  - 用空格键切换下一页
+
 - `head`: print first N lines of file. default to 10.
   - `head -n 3 README.md` print first three
 - `tail`: print last N lines of file (pandas.dataframe估计是借鉴着bash)
@@ -584,7 +587,7 @@ Ben Barnes
   - `cut -c 2-9 people.txt`: return character, 2 to 9 digits (这里计算是从1开始)
   - Example: 你想找到last name for each line
     - `cut -d ' ' -f2 people.txt`: 
-- `paste`: merge lines from different files (default delimiter is tab)
+- `paste`: merge lines from different files (default delimiter is tab) 实际上是做个horizontal concatenation
   - tab delimiter
     - `paste first.txt last.txt`
   - other delimiter `-d` option for delimiter
@@ -652,7 +655,7 @@ flowchart LR
 
 > 这张要重点学习, 为了转行DE
 
-Overview:
+**Overview:**
 
 - Examine ur network configuration
 - Evaluate the stability of a URL connection
@@ -676,7 +679,7 @@ Overview:
 
 
 
-## Hands-ON lab: compressing, networking commands (40 mins)
+## **lab**: compressing, networking commands (40 mins)
 
 略
 
@@ -1089,6 +1092,16 @@ objective:
 - what's the difference between environment and shell variable?
 - `''` and `""` , what's the difference and could you give an example?
 - command substitution `$(pwd)` and variable substitution `$PATH`
+
+
+
+# Final Project and Final Exam
+
+Objectives:
+
+- develop a shell script using several linux commands, environment variables, pipes and filters
+- Specify your shell script to run at specific time intervals using `crontab`
+- Evaluate ur peer's sheel scripts and output using the provided rubric and grading scheme
 
 
 
