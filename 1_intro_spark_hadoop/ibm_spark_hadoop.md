@@ -162,9 +162,105 @@ Open source license types:
 ### Mapreduce
 
 - 功能为processes large volumes of data in a parallelly distributed manner, 这个处理的逻辑是不变的，虽然mapreduce这个tool在逐渐phase away.
+- 具体流程firstly, maps out big data,shuffule and sort (比如shuffle all words togethers, from **apple banana apple orange banana** to **apple apple banana banana orange**). Hadoop 是直接写进hardware的 (slower), 详情见[map reduce documentation](https://hadoop.apache.org/docs/r1.2.1/mapred_tutorial.html).
+- 和Apache Spark的功能几乎一致，但是spark写进ram里，而不是硬盘
+  - Pulls it into RAM
+  - writes into harddrive
+  - reads it off hard drive
+  - shuffles it around
+  - writes it back to hard drive
+  - pulls it off the hard drive and does the processing
+
+![Screenshot 2022-11-14 at 08.38.34](/Users/yixiangzhang/Desktop/Screenshot 2022-11-14 at 08.38.34.png)
+
+
+
+### Data ingestion
+
+> scoop and flume are specific to hadoop. 通过api获得数据
+
+#### Sqoop
+
 - 
 
+![Screenshot 2022-11-14 at 08.41.38](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/sqoop.png)
 
+#### Flume
+
+![Screenshot 2022-11-14 at 08.42.52](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/flume.png)
+
+
+
+### Scripting
+
+#### Pig 
+
+<img src="/Users/yixiangzhang/Desktop/Screenshot 2022-11-14 at 08.45.28.png" alt="Screenshot 2022-11-14 at 08.45.28" style="zoom:67%;" />
+
+#### Hive
+
+![Screenshot 2022-11-14 at 08.47.06](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/hive.png)
+
+
+
+### Spark
+
+| -                   | Spark                                         | MapReduce                 |
+| ------------------- | --------------------------------------------- | ------------------------- |
+| language written in | scale                                         | java                      |
+| Process             | 全在RAM中运行 (in memory computation of data) | 在RAM和hard drive来回读写 |
+|                     |                                               |                           |
+|                     |                                               |                           |
+|                     |                                               |                           |
+
+
+
+![Screenshot 2022-11-14 at 08.54.15](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/spark.png)
+
+### Machine Learning (mahout)
+
+- 正在phasing out and replaced with spark and python
+
+  ![Screenshot 2022-11-14 at 09.01.11](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/mahout.png)
+
+### Monitoring and management (Apache Ambari)
+
+- AKA security <img src="/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/ambari.png" alt="Screenshot 2022-11-14 at 09.02.28" style="zoom:67%;" />guard; traffic cop
+
+
+
+### Streaming (kafka, storm)
+
+
+
+![Screenshot 2022-11-14 at 09.05.00](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/kafka.png)
+
+
+
+![Screenshot 2022-11-14 at 09.07.46](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/storm.png)
+
+
+
+### Security
+
+#### Ranger
+
+![Screenshot 2022-11-14 at 09.09.03](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/ranger.png)
+
+#### Knox
+
+![Screenshot 2022-11-14 at 09.10.07](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/knox.png)
+
+### Workflow system
+
+#### OOZIE
+
+- 和airflow很像，workflow scheduler system to manage Hadoop jobs
+- triggered by time and data availability 
+
+
+
+![Screenshot 2022-11-14 at 09.11.59](/Users/yixiangzhang/Documents/DE_course/1_intro_spark_hadoop/img/Oozie.png)
 
 
 
