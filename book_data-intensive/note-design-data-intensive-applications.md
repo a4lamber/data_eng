@@ -4,6 +4,8 @@
 
 
 
+[toc]
+
 
 
 Some words
@@ -12,13 +14,47 @@ Some words
 
 - reduce the risk of **vendor lock-in**
 
-
-
-## Chapter 1. The Big Picture
-
+- High level of understanding of the big picture, and why we choose one over another
 
 
 
+# Chapter 1. The Big Picture
 
 
+
+
+
+
+
+# Chapter 2. The Battle of the Data Model
+
+
+
+## 2.1 Rivals of the Relational Model
+
+
+
+
+
+
+
+## 2.2 Query Languages for Data
+
+
+
+
+
+## 2.3 Graph-like Data Models
+
+
+
+
+
+
+
+
+
+
+
+# Chapter 3. Storage and Retrieval
 
