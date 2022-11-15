@@ -498,17 +498,30 @@ Summary
 
 ### History
 
-- Part of LAMP Stack: linux, apache webserver mysql and php stack
+- Developed by MySQL AB, named after developer's daughter
+- Sakila the dolphin
 
+- Part of LAMP Stack: linux, apache webserver mysql and php stack. 所以非那时常popular
 
+- Dual licenve
+  - GNU GPL
+  - commerical license
 
-
-
-
+- object-relational database management system
 
 
 
 ## PostgreSQL
+
+
+
+
+
+
+
+
+
+
 
 
 
