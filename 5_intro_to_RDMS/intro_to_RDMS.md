@@ -298,6 +298,29 @@ Application
 
 ![Screenshot 2022-11-11 at 08.23.29](/Users/yixiangzhang/Documents/DE_course/5_intro_to_RDMS/imgs/client-server.png)
 
+
+
+拿最近在学的Azure作为例子吧, Azure的DBFS相当于client和server之间的中间层，负责handle这些信息的传输，用户可以从command line, API, Workspace三个地方作为切入口
+
+
+
+```mermaid
+flowchart TD
+		block1("Databricks Workspace; Databrick CLI; Databrick API")
+		block2("DBFS")
+		block3("Service principal; Access token; SAS Token")
+		block4("Azuer blob storage; Azure datalake gen 1&2")
+		block1 <--> block2
+		block2 <-->|Create mount using credentials| block3
+		block3 <-->|Provided required access| block4
+```
+
+
+
+
+
+
+
 ### Deployment Topologies - Cloud
 
 - Database resides in a cloud environment
